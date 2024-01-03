@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  SUPERADMIN
+}
+
+model Session {
+  id        String   @id @default(cuid()) @map("_id")
+  sid       String?  @unique
+  data      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admin {
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  fullName         String     @unique
+  email            String     @unique
+  chatId           Int        @unique
+  createdAt        DateTime   @default(now())
+  role             Role       @default(ADMIN)
+  lastSeen         DateTime   @updatedAt
+  createdQuestions Question[]
+  createdLessons   Lesson[]
+}
+
+model URLS {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  url         String   @unique
+  userCount   Int
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Users {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  chatId    Int      @unique
+  Rateing   Int      @default(0)
+  data      Json[]   @default([])
+  Name      String
+  createdAt DateTime @default(now())
+  lastSeen  DateTime @updatedAt
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?  @db.ObjectId
+}
+
+model Course {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   @unique
+  description String
+  content     Lesson[]
+
+  usersCompleted Users[]
+}
+
+model Lesson {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String     @unique
+  description String
+  Question    Question[]
+
+  createdAt DateTime @default(now())
+  lastSeen  DateTime @updatedAt
+  Admin     Admin?   @relation(fields: [adminId], references: [id])
+  adminId   String?  @db.ObjectId
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?  @db.ObjectId
+}
+
+model Question {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  question        String   @unique
+  answer          String
+  choice          String[]
+  connectedLesson Lesson?  @relation(fields: [lessonId], references: [id])
+  lessonId        String?  @db.ObjectId
+  explanation     String?
+  createdAt       DateTime @default(now())
+  lastSeen        DateTime @updatedAt
+  Admin           Admin?   @relation(fields: [adminId], references: [id])
+  adminId         String?  @db.ObjectId
+}

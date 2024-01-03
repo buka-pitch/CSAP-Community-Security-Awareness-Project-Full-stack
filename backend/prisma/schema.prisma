@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  Rateing   BigInt
+  chatId    BigInt   @unique
+  createdAt DateTime @db.Date
+  email     String   @unique
+  fullName  String   @unique
+  lastSeen  DateTime @db.Date
+}
+
+model Course {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  description String
+  title       String @unique
+}
+
+model Lesson {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  courseId    String?  @db.ObjectId
+  createdAt   DateTime @db.Date
+  description String
+  lastSeen    DateTime @db.Date
+  title       String   @unique
+}
+
+model Question {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answer    String
+  choice    String[]
+  createdAt DateTime @db.Date
+  lastSeen  DateTime @db.Date
+  lessonId  String?  @db.ObjectId
+  question  String   @unique
+}
+
+model Session {
+  id        String   @id @map("_id")
+  data      String?
+  sid       String   @unique
+  expiresAt DateTime @db.Date
+}
+
+model URLS {
+  id  String @id @default(auto()) @map("_id") @db.ObjectId
+  /// Field referred in an index, but found no data to define the type.
+  url Json?  @unique
+}
+
+model Users {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  Name          String?
+  Email         String?  @unique
+  Emailverified Boolean  @default(false)
+  Role          UserRole @default(USER)
+  Password      String?
+  Rateing       BigInt?
+  chatId        BigInt?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  /// Could not determine type: the field only had null or empty values in the sample set.
+  data          Json?
+}
