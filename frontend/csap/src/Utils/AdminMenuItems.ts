@@ -10,20 +10,20 @@ export const AdminMenuItems = [
   {
     title: "Dashboard",
     icon: ManageHistory,
-    path: "/manage-courses",
+    path: "/admin",
   },
   {
     title: "Courses",
     icon: ManageHistory,
-    path: "/manage-courses",
+    path: "/admin/courses",
   },
   {
     title: "Challenges",
     icon: ManageHistory,
-    path: "/manage-courses",
+    path: "/admin/challenges",
   },
   {
-    title: "Manage Courses",
+    title: "Manage User",
     icon: ManageHistory,
     path: "/manage-courses",
   },

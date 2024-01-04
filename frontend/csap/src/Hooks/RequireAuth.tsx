@@ -1,4 +1,10 @@
-import { useLocation, Navigate, useNavigate, Outlet, useNavigation } from "react-router-dom";
+import {
+  useLocation,
+  Navigate,
+  useNavigate,
+  Outlet,
+  useNavigation,
+} from "react-router-dom";
 
 import useAuth from "./useAuth";
 import { useEffect } from "react";
@@ -20,13 +26,12 @@ export const RequireAuth = () => {
 export const DisabledIfAuthenticated = () => {
   const isAuthenticated = useAuth();
   const location = useLocation();
-  const navigation = useNavigation
+  const navigation = useNavigation;
 
- useEffect(()=>{
-  if (isAuthenticated){
-    
-  }
- },[])
+  useEffect(() => {
+    if (isAuthenticated) {
+    }
+  }, []);
 };
 
 export const AdminOnly = () => {

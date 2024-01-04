@@ -55,7 +55,8 @@ export const Container = styled.div`
   align-items: center;
   padding-top: 20px;
   padding-bottom: 20px;
-  background: linear-gradient(90deg, #1cb5e0 0%, #000851 100%);
+  background: ${(prop) =>
+    prop.itemProp || "linear - gradient(90deg, #1cb5e0 0 %, #000851 100 %)"};
   background: url(${(props) => props.itemProp});
   background-position: 0vw;
   background-repeat: no-repeat;
