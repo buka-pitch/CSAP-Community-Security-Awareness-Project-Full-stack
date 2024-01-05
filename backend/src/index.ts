@@ -45,9 +45,10 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/auth", AuthRoute);
-app.use(AccessChecker);
+// app.use(AccessChecker);
 app.use("/course", CourseRoute);
 // app.use(AdminAcessChecker);
 app.use("/admin", AdminRoute);

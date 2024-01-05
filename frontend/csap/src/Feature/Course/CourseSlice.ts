@@ -1,22 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface CourseState {
-  value: { title: string };
+  value: { title: string; description: string }[];
 }
 
 const initialState: CourseState = {
-  value: {
-    title: "",
-  },
+  value: [],
 };
 
 export const CourseSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    setCourses: (state, action) => {
+      state.value = action.payload;
+    },
+  },
 });
 
 // Action creators are generated for each case reducer function
-export const Reducers = CourseSlice.actions;
+export const { setCourses } = CourseSlice.actions;
 
 export default CourseSlice.reducer;

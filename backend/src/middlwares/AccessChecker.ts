@@ -23,8 +23,13 @@ export async function AccessChecker(
           if (!user) {
             return res.redirect(301, "/login");
           }
+          if (user) {
+            return next();
+          }
         }
       )(req, res, next);
+    } else {
+      next();
     }
   } catch (error) {
     console.log(error);

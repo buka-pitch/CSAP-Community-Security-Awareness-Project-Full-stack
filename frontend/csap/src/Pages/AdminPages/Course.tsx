@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Feature/store";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 90 },
@@ -9,6 +11,11 @@ const columns: GridColDef[] = [
     editable: true,
   },
 
+  {
+    field: "Description",
+
+    width: 150,
+  },
   {
     field: "Lessons",
     type: "number",
@@ -21,20 +28,24 @@ const columns: GridColDef[] = [
     width: 160,
   },
 ];
-
-const rows = [
-  { id: 1, Course: "Snow", Lessons: 2 },
-  { id: 2, Course: "Lannister", Lessons: 5 },
-  { id: 3, Course: "Lannister", Lessons: 7 },
-  { id: 4, Course: "Stark", Lessons: 3 },
-  { id: 5, Course: "Targaryen", Lessons: 2 },
-  { id: 6, Course: "Melisandre", Lessons: 1 },
-  { id: 7, Course: "Clifford", Lessons: 2 },
-  { id: 8, Course: "Frances", Lessons: 2 },
-  { id: 9, Course: "Roxie", Lessons: 5 },
-];
+type ROW = {
+  id: number;
+  Course: string;
+  Description: string;
+  Lessons: number;
+}[];
+const rows: ROW = [];
 
 function Course() {
+  const course = useSelector((state: RootState) => state.course.value);
+  course.forEach((i, index) => {
+    return rows.push({
+      id: index,
+      Course: i.title,
+      Description: i.description,
+      Lessons: 0,
+    });
+  });
   return (
     <Container>
       <CourseHeader>CSAP Security Courses</CourseHeader>

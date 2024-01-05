@@ -1,21 +1,18 @@
-import { Router } from "express";
+import express from "express";
 import {
   CreateCourse,
   DeleteCourse,
   GetAllCourses,
   GetCourse,
+  GetFeaturedCourse,
   UpdateCourse,
 } from "../../controllers/CourseControllers";
 
-const router = Router();
+const router = express.Router();
 
-router.route("/").get(GetAllCourses);
-router
-  .route("/:id")
-  .get(GetCourse)
-  .post(CreateCourse)
-  .delete(DeleteCourse)
-  .patch(UpdateCourse);
+router.route("/").get(GetAllCourses).post(CreateCourse);
+router.route("/featured").get(GetFeaturedCourse);
+router.route("/:title").get(GetCourse).delete(DeleteCourse).patch(UpdateCourse);
 
 // router.route('/:id/certificate').get();
 

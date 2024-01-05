@@ -18,6 +18,7 @@ import Course from "./Pages/AdminPages/Course";
 import Challenges from "./Pages/AdminPages/Challenges";
 import UserHomePage from "./Pages/HomePage/UserHomePage";
 import useAuth from "./Hooks/useAuth";
+import CourseDetail from "./Pages/CoursePage";
 
 function App() {
   const isAUthenticated = useAuth();
@@ -43,6 +44,7 @@ function App() {
           <Route path="/" Component={UserHomePage} />
           <Route path="/scan" Component={Scanner} />
           <Route path="/course" Component={HomePage} />
+          <Route path="/course/:courseTitle" Component={CourseDetail} />
         </Route>
 
         {/* Admin Only */}

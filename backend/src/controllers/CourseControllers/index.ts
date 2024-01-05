@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, response } from "express";
 import prisma from "../../utils/PrismaInstanceConfig";
 import { ApiErrorResponse, ApiResponse } from "../../types/global";
+import { title } from "process";
 // Controller for getting all courses from db
 export async function GetAllCourses(
   req: Request,
@@ -8,13 +9,37 @@ export async function GetAllCourses(
   next: NextFunction
 ) {
   try {
-    console.log("inside course controller");
     const Courses = await prisma.course.findMany();
     const responseData: ApiResponse = {
       status: "Success",
       statusCode: 200,
       message: "course data",
       data: Courses,
+    };
+    return res.json(responseData);
+  } catch (err) {
+    // return the error for the error handler
+    return next(err);
+  }
+}
+export async function GetFeaturedCourse(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    console.log("inside");
+    const FeaturedCourses = await prisma.course
+      .findMany({ take: 4 })
+      .catch((err) => {
+        throw new Error(err);
+      });
+
+    const responseData: ApiResponse = {
+      status: "Success",
+      statusCode: 200,
+      message: "Featured course data",
+      data: FeaturedCourses,
     };
     return res.json(responseData);
   } catch (err) {
@@ -29,33 +54,41 @@ export async function GetCourse(
   next: NextFunction
 ) {
   try {
-    if (!req.params.id) {
+    console.log(req.params);
+    console.log(req.query);
+    if (!req.params.title) {
       const error: ApiErrorResponse = {
         status: "Failed",
-        message: "course Id Required !",
+        message: "course title Required !",
       };
       return res.status(400).json(error);
     }
-    const courseId = req.params.id;
+    const courseTitle = req.params.title;
+    console.log(courseTitle);
     const Course = prisma.course
-      .findUnique({ where: { id: courseId } })
+      .findUnique({ where: { title: courseTitle } })
       .then((course) => {
         if (!course) {
           const responseData = {
-            status: "success",
-            statusCode: 200,
+            status: "NotFound",
+            statusCode: 404,
             message: "no data",
             data: [],
           };
           return res.status(200).json(responseData);
         }
-        const responseData = {
-          status: "success",
-          statusCode: 200,
-          message: "Course Data",
-          data: course,
-        };
-        return res.status(200).json(responseData);
+
+        prisma.lesson
+          .findMany({ where: { courseId: course.id } })
+          .then((lessons) => {
+            const responseData = {
+              status: "success",
+              statusCode: 200,
+              message: "Course Data",
+              data: { ...course, lessons },
+            };
+            return res.status(200).json(responseData);
+          });
       });
   } catch (err) {
     return next(err);
