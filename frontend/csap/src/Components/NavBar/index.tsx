@@ -1,8 +1,15 @@
-import { NavLink } from "react-router-dom";
-import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Feature/store";
 import {
+  NavLink,
+  useLocation,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../Feature/store";
+import axios from "../../Utils/axiosInstance";
+import {
+  ArrowForward,
   Logout,
   Menu as Menui,
   MenuOpen,
@@ -21,9 +28,11 @@ import {
   Typography,
   Box,
 } from "@mui/material";
+import { UserState, logoutUser, setUser } from "../../Feature/User/UserSlice";
 
 const PopupMenu = () => {
   const user = useSelector((state: RootState) => state.user.value);
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -36,6 +45,20 @@ const PopupMenu = () => {
   const usernameFirstWord = () => {
     let word = user.user.Name[0].toUpperCase();
     return word;
+  };
+
+  const handleLogout = async () => {
+    await axios
+      .get("/auth/logout")
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(res.data);
+          dispatch(logoutUser(""));
+        } else {
+          dispatch(logoutUser(""));
+        }
+      })
+      .catch((err) => dispatch(logoutUser("")));
   };
 
   return (
@@ -91,22 +114,18 @@ const PopupMenu = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar />
-          <NavLinks itemProp="black" to="/admin">
-            Admin Dashboard
-          </NavLinks>
-        </MenuItem>
+        {user.user.Role === "ADMIN" && (
+          <MenuItem onClick={handleClose}>
+            <Avatar />
+            <NavLinks itemProp="black" to="/admin">
+              Admin Dashboard
+            </NavLinks>
+          </MenuItem>
+        )}
 
         <Divider />
 
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
@@ -119,6 +138,26 @@ const PopupMenu = () => {
 
 const NavBar = () => {
   const user = useSelector((state: RootState) => state.user.value);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  function handleLessonButton() {
+    if (user.isAuthenticated && !location.pathname.includes("/course")) {
+      return (
+        <IconButton
+          onClick={() => {
+            navigate("/course");
+          }}
+          size="small"
+        >
+          <ArrowForward />
+          <Typography>Continue Learning</Typography>
+        </IconButton>
+      );
+    } else {
+      return <></>;
+    }
+  }
   return (
     <Nav>
       <Left>
@@ -131,6 +170,7 @@ const NavBar = () => {
             <NavLinks to="/register">Register</NavLinks>
           </>
         )}
+        {handleLessonButton()}
         {user.isAuthenticated && <PopupMenu />}
       </Right>
 

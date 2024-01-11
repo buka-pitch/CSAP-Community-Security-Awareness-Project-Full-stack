@@ -23,18 +23,20 @@ model Admin {
 }
 
 model Course {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
   description String
-  title       String @unique
+  title       String  @unique
+  img         String?
 }
 
 model Lesson {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   courseId    String?  @db.ObjectId
-  createdAt   DateTime @db.Date
-  description String
-  lastSeen    DateTime @db.Date
   title       String   @unique
+  description String
+  img         String?
+  createdAt   DateTime @db.Date
+  lastSeen    DateTime @db.Date
 }
 
 model Question {
@@ -45,6 +47,7 @@ model Question {
   lastSeen  DateTime @db.Date
   lessonId  String?  @db.ObjectId
   question  String   @unique
+  img       String?
 }
 
 model Session {
@@ -67,10 +70,17 @@ model Users {
   Emailverified Boolean  @default(false)
   Role          UserRole @default(USER)
   Password      String?
-  Rateing       BigInt?
-  chatId        BigInt?  @unique
+  Rateing       Int?
+  chatId        Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   /// Could not determine type: the field only had null or empty values in the sample set.
   data          Json?
+}
+
+model Activation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  link      String   @unique
+  expired   Boolean
+  createdAt DateTime @default(now())
 }

@@ -62,6 +62,7 @@ export const Container = styled.div`
   background-repeat: no-repeat;
   background-blend-mode: multiply;
   background-size: 100%;
+
   border: none;
   /* padding: 20px; */
   position: relative;

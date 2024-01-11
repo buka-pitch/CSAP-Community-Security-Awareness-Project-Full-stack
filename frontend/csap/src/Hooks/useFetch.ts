@@ -16,7 +16,7 @@ export enum ACTIONS {
   ERROR = "error",
 }
 
-type FetchState = {
+export type FetchState = {
   data: {
     data: [];
     status: string;

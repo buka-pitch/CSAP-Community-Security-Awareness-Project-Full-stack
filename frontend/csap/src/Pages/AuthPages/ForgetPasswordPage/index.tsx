@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,7 +7,9 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { RootState } from "../../../Feature/store";
 import { useEffect, useState } from "react";
 import axios from "../../../Utils/axiosInstance";
-import { CircularProgress, TextField } from "@mui/material";
+import Cookies from "js-cookie";
+import { CircularProgress, TextField, Typography } from "@mui/material";
+import styled from "styled-components";
 const schema = yup.object({
   // eslint-disable-next-line no-control-regex
   email: yup
@@ -18,22 +19,15 @@ const schema = yup.object({
       /^(?=.{1,256})(?=.{1,64}@.{1,255}$)[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
       "Please use a valid Email!"
     ),
-  password: yup
-    .string()
-    .required("Password Required !")
-    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
-      message:
-        "Password must be at least one letter one number and one Charachter, No Space",
-    }),
 });
 
-type FormInputs = {
-  email: string;
-  password: string;
-};
+function ForgetPassword() {
+  type FormInputs = {
+    email: string;
+  };
 
-export const Login = () => {
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const dispatcher = useDispatch();
   const navigate = useNavigate();
@@ -48,42 +42,24 @@ export const Login = () => {
   } = useForm<FormInputs>({ resolver: yupResolver(schema) });
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    setIsLoading(true);
-    setError("");
-    const response = await axios
-      .post(
-        "/auth/login",
-        {
-          username: data.email,
-          password: data.password,
-        },
-        { withCredentials: true }
+    const sendOtp = await axios
+      .get(
+        `/auth/new-user-activation?userId=${res.data.data.id}&email=${res.data.data.Email}`
       )
-      .then((res) => {
-        if (res.data?.id) {
-          dispatcher(setUser(res.data));
-          dispatcher(setIsAuthenticated(true));
-          setIsLoading(false);
-
-          navigate(from, { replace: true });
+      .then((resData) => {
+        if (resData.status === 200 && resData.data.status === "Success") {
+          setMessage(resData.data.message);
         }
       })
-
-      .catch((err) => {
-        console.log(err);
-        // err.response.message && setError(err.response.message);
-        // setError(err.response.data.message);
-        // setIsLoading(false);
-        setError(err.response.data.message);
-        return err;
+      .catch((error) => {
+        setError(error.response.data.message);
       });
-    setIsLoading(false);
-    console.log(response);
   };
 
   return (
     <Container>
       <Card>
+        <CardCover></CardCover>
         <CardContent>
           <CardHeader>
             <h2>Login</h2>
@@ -91,7 +67,6 @@ export const Login = () => {
           <Form action="" method="post" onSubmit={handleSubmit(onSubmit)}>
             <FormWrapper>
               <InputWrapper>
-                {/* <label htmlFor="email">Email</label> */}
                 <TextField
                   sx={{ width: "100%", height: "40px", marginBottom: "30px" }}
                   placeholder="Email"
@@ -109,25 +84,8 @@ export const Login = () => {
               </InputWrapper>
 
               <InputWrapper>
-                {/* <label htmlFor="password">Password</label> */}
-                <TextField
-                  sx={{ width: "100%", height: "40px", marginBottom: "30px" }}
-                  placeholder="Password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  {...register("password")}
-                />
-                {/* <TextInput
-                  type="password"
-                  id="password"
-                  {...register("password")}
-                /> */}
-                {errors.password && <Error>{errors.password?.message}</Error>}
-              </InputWrapper>
-              <InputWrapper>
                 {!isLoading ? (
-                  <Greenbutton type="submit">Login</Greenbutton>
+                  <Greenbutton type="submit">Reset</Greenbutton>
                 ) : (
                   <Greenbutton type="submit">
                     <CircularProgress
@@ -135,6 +93,7 @@ export const Login = () => {
                     />
                   </Greenbutton>
                 )}
+                {message && <Typography>{message}</Typography>}
                 {error && <Error>{error}</Error>}
               </InputWrapper>
             </FormWrapper>
@@ -152,11 +111,10 @@ export const Login = () => {
             </InputWrapper>
           </Form>
         </CardContent>
-        <CardCover></CardCover>
       </Card>
     </Container>
   );
-};
+}
 
 const Greenbutton = styled.button`
   background-color: #00ff00;
@@ -262,3 +220,5 @@ const CardContent = styled.div`
 
   background-color: #fff;
 `;
+
+export default ForgetPassword;

@@ -1,42 +1,59 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useForm, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from "react-redux";
-import { setIsAuthenticated, setUser } from "../../../Feature/User/UserSlice";
-import { useNavigate } from "react-router-dom";
-import { RootState } from "../../../Feature/store";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useNavigate } from "react-router-dom";
+// import { RootState } from "../../../Feature/store";
 import { useState } from "react";
 import axios from "../../../Utils/axiosInstance";
-import { DisabledIfAuthenticated } from "../../../Hooks/RequireAuth";
+import { CircularProgress, TextField } from "@mui/material";
+import { Check, Email, Password, Person } from "@mui/icons-material";
 const schema = yup
   .object({
+    FirstName: yup.string().required("First Name is Required!"),
+    LastName: yup.string().required("First Name is Required!"),
     // eslint-disable-next-line no-control-regex
-    email: yup
+    Email: yup
       .string()
       .required("Email is Required!")
       .matches(
         /^(?=.{1,256})(?=.{1,64}@.{1,255}$)[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
         "Please use a valid Email!"
       ),
-    password: yup.string().required("Password Required !"),
-    // .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
-    //   message:
-    //     "Password nust be at least one letter one number and one Charachter",
-    //   excludeEmptyString: true,
-    // }),
+    Password: yup
+      .string()
+      .required("Password Required !")
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+        message:
+          "Password nust be at least one letter one number and one Charachter",
+        excludeEmptyString: true,
+      }),
+    ConfirmPassword: yup
+      .string()
+      .required("Password Required !")
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+        message:
+          "Password nust be at least one letter one number and one Charachter",
+        excludeEmptyString: true,
+      }),
   })
   .required();
+
 type FormInputs = {
-  email: string;
-  password: string;
+  FirstName: string;
+  LastName: string;
+  Email: string;
+  Password: string;
+  ConfirmPassword: string;
 };
 export const Register = () => {
   const [error, setError] = useState("");
-  const dispatcher = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user.value);
-  DisabledIfAuthenticated();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  // const dispatcher = useDispatch();
+  // const navigate = useNavigate();
+  // const user = useSelector((state: RootState) => state.user.value);
 
   const {
     register,
@@ -44,67 +61,188 @@ export const Register = () => {
     formState: { errors },
   } = useForm<FormInputs>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
-    const response = await axios
-      .post("/auth/login", {
-        username: data.email,
-        password: data.password,
+    setLoading(true);
+    setError("");
+    axios
+      .post("/auth/register", {
+        Name: data.FirstName + " " + data.LastName,
+        Email: data.Email,
+        Password: data.Password,
       })
-      .then((res) => {
-        console.log(res.data);
-        if (res.data?.id) {
-          dispatcher(setUser(res.data));
-          dispatcher(setIsAuthenticated(true));
+      .then(async (res) => {
+        if (res.status === 201) {
+          console.log("success", res.data);
+          const sendOtp = await axios
+            .get(
+              `/auth/new-user-activation?userId=${res.data.data.id}&email=${res.data.data.Email}`
+            )
+            .then((resData) => {
+              if (resData.status === 200 && resData.data.status === "Success") {
+                setMessage(resData.data.message);
+              }
+            })
+            .catch((error) => {
+              setError(error.response.data.message);
+            });
         }
-        // if (res.data?.message) {
-        //   // setError(res.data.message);
-        // }
+        setLoading(false);
       })
       .catch((err) => {
-        alert(JSON.stringify(err));
-        return err;
+        console.log(err);
+        setError(err.response.data.message);
+        setLoading(false);
       });
-    console.log(response);
   };
-
-  user?.isAuthenticated && navigate("/");
   return (
     <Container>
       <Card>
         <CardContent>
           <CardHeader>
-            <h2>Login</h2>
+            <h2>Signup CSAP Account</h2>
           </CardHeader>
-          <Form action="" method="post" onSubmit={handleSubmit(onSubmit)}>
-            <FormWrapper>
-              <InputWrapper>
-                <label htmlFor="email">Email</label>
-                <TextInput
-                  type="email"
-                  id="email"
-                  {...register("email", {
-                    required: true,
-                    maxLength: 50,
-                    minLength: 5,
-                  })}
-                />
-                {errors.email && <Error>{errors.email?.message}</Error>}
-              </InputWrapper>
+          {message ? (
+            <Message>{message}</Message>
+          ) : (
+            <Form action="" method="post" onSubmit={handleSubmit(onSubmit)}>
+              <FormWrapper>
+                <FormFieldWrapper>
+                  <Person />
+                  <InputWrapper>
+                    <TextField
+                      sx={{
+                        width: "100%",
+                        height: "40px",
+                        marginBottom: "30px",
+                      }}
+                      placeholder="First Name"
+                      label="First Name"
+                      type="text"
+                      id="firstname"
+                      {...register("FirstName", {
+                        required: true,
+                        maxLength: 50,
+                        minLength: 5,
+                      })}
+                    />
+                    {errors.FirstName && (
+                      <Error>{errors.FirstName?.message}</Error>
+                    )}
+                  </InputWrapper>
+                </FormFieldWrapper>
+                <FormFieldWrapper>
+                  <Person />
+                  <InputWrapper>
+                    <TextField
+                      sx={{
+                        width: "100%",
+                        height: "40px",
+                        marginBottom: "30px",
+                      }}
+                      placeholder="Last Name"
+                      label="Last Name"
+                      type="text"
+                      id="lastname"
+                      {...register("LastName", {
+                        required: true,
+                        maxLength: 50,
+                        minLength: 5,
+                      })}
+                    />
+                    {errors.LastName && (
+                      <Error>{errors.LastName?.message}</Error>
+                    )}
+                  </InputWrapper>
+                </FormFieldWrapper>
+                <FormFieldWrapper>
+                  <Email />
+                  <InputWrapper>
+                    {/* <label htmlFor="email">Email</label> */}
+
+                    <TextField
+                      sx={{
+                        width: "100%",
+                        height: "40px",
+                        marginBottom: "30px",
+                      }}
+                      placeholder="Email"
+                      label="Email"
+                      type="email"
+                      id="email"
+                      {...register("Email", {
+                        required: true,
+                        maxLength: 50,
+                        minLength: 5,
+                      })}
+                    />
+                    {errors.Email && <Error>{errors.Email?.message}</Error>}
+                  </InputWrapper>
+                </FormFieldWrapper>
+                <FormFieldWrapper>
+                  <Password />
+                  <InputWrapper>
+                    {/* <label htmlFor="email">Email</label> */}
+                    <TextField
+                      sx={{
+                        width: "100%",
+                        height: "40px",
+                        marginBottom: "30px",
+                      }}
+                      placeholder="Password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      {...register("Password", {
+                        required: true,
+                        maxLength: 50,
+                        minLength: 5,
+                      })}
+                    />
+                    {errors.Password && (
+                      <Error>{errors.Password?.message}</Error>
+                    )}
+                  </InputWrapper>
+
+                  <InputWrapper>
+                    {/* <label htmlFor="email">Email</label> */}
+                    <TextField
+                      sx={{
+                        width: "100%",
+                        height: "40px",
+                        marginBottom: "30px",
+                      }}
+                      placeholder="Confirm Password"
+                      label="Confirm Password"
+                      type="password"
+                      id="confirmPassword"
+                      {...register("ConfirmPassword", {
+                        required: true,
+                        maxLength: 50,
+                        minLength: 5,
+                      })}
+                    />
+                    {errors.ConfirmPassword && (
+                      <Error>{errors.ConfirmPassword?.message}</Error>
+                    )}
+                  </InputWrapper>
+                </FormFieldWrapper>
+              </FormWrapper>
+              <ErrMsg>{error && <Error>{error}</Error>}</ErrMsg>
 
               <InputWrapper>
-                <label htmlFor="password">Password</label>
-                <TextInput
-                  type="password"
-                  id="password"
-                  {...register("password")}
-                />
-                {errors.password && <Error>{errors.password?.message}</Error>}
+                {loading ? (
+                  <Greenbutton disabled onClick={handleSubmit(onSubmit)}>
+                    <p>SignUp</p>
+                    <CircularProgress />
+                  </Greenbutton>
+                ) : (
+                  <Greenbutton type="submit" onClick={handleSubmit(onSubmit)}>
+                    <p>SignUp</p>
+                    {loading ? <CircularProgress /> : <Check />}
+                  </Greenbutton>
+                )}
               </InputWrapper>
-              <InputWrapper>
-                <Greenbutton type="submit">Login</Greenbutton>
-                {error && <Error>{error}</Error>}
-              </InputWrapper>
-            </FormWrapper>
-          </Form>
+            </Form>
+          )}
         </CardContent>
         <CardCover></CardCover>
       </Card>
@@ -112,9 +250,42 @@ export const Register = () => {
   );
 };
 
+const keyframe = keyframes`
+ from {
+  translate: 0px -600px ;
+ }
+ to {translate:0px}
+`;
+const Message = styled.div`
+  width: 90%;
+  height: 80%;
+  align-self: center;
+  background-color: blueviolet;
+  padding: 10px;
+  border-radius: 25px;
+  animation: ${keyframe} 1s ease-in;
+  color: white;
+`;
+const ErrMsg = styled.div`
+  width: 70%;
+`;
+const FormFieldWrapper = styled.div`
+  /* height: 100%; */
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+`;
 const Greenbutton = styled.button`
   background-color: #00ff00;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: large;
+  gap: 15px;
+  width: 70%;
   height: 50px;
   border: none;
   border-radius: 20px;
@@ -130,32 +301,20 @@ const Error = styled.p`
   border: 1px solid red;
   padding: 10px;
 `;
-const TextInput = styled.input`
-  width: 100%;
-  height: 40px;
-  outline: none;
-  border-bottom: 1px solid violet;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  background-color: #d3d1d1;
-  overflow: hidden;
-  border-radius: 15px;
-  text-align: center;
-`;
+
 const InputWrapper = styled.div`
   /* height: 100px; */
-  width: 70%;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  align-items: start;
+  margin-top: 10px;
+  align-items: center;
   justify-content: center;
   /* background-color: violet; */
 `;
 const FormWrapper = styled.div`
   width: 90%;
-  height: 90%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -165,7 +324,7 @@ const FormWrapper = styled.div`
 `;
 const Form = styled.form`
   width: 100%;
-  height: 70%;
+  min-height: 70%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -188,6 +347,8 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  z-index: 999;
 `;
 
 const Card = styled.div`
@@ -215,7 +376,7 @@ const CardCover = styled.div`
 `;
 
 const CardContent = styled.div`
-  flex: 1;
+  flex: 2;
 
   /* height: 100%; */
   display: flex;

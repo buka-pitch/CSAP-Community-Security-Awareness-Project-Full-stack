@@ -4,11 +4,11 @@ import {
   useNavigate,
   Outlet,
   useNavigation,
+  redirect,
 } from "react-router-dom";
 
 import useAuth from "./useAuth";
-import { useEffect } from "react";
-import { getCookie } from "./ManageCookie";
+
 import { useSelector } from "react-redux";
 import { RootState } from "../Feature/store";
 
@@ -25,13 +25,8 @@ export const RequireAuth = () => {
 
 export const DisabledIfAuthenticated = () => {
   const isAuthenticated = useAuth();
-  const location = useLocation();
-  const navigation = useNavigation;
 
-  useEffect(() => {
-    if (isAuthenticated) {
-    }
-  }, []);
+  return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />;
 };
 
 export const AdminOnly = () => {

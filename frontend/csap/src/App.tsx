@@ -18,7 +18,11 @@ import Course from "./Pages/AdminPages/Course";
 import Challenges from "./Pages/AdminPages/Challenges";
 import UserHomePage from "./Pages/HomePage/UserHomePage";
 import useAuth from "./Hooks/useAuth";
-import CourseDetail from "./Pages/CoursePage";
+import CourseDetail from "./Pages/CoursePage/CourseDetail";
+import CoursePage from "./Pages/CoursePage";
+import EmailVerification from "./Pages/AuthPages/RegistrationPage/Verification";
+import ForgetPassword from "./Pages/AuthPages/ForgetPasswordPage";
+import LessonPage from "./Pages/CoursePage/LessonLearning";
 
 function App() {
   const isAUthenticated = useAuth();
@@ -36,27 +40,37 @@ function App() {
 
         <Route path="/unauthorized" Component={UnAuthorized} />
 
-        <Route path="/login" Component={Login} />
-        <Route path="/register" Component={Register} />
+        <Route Component={DisabledIfAuthenticated}>
+          <Route path="/login" Component={Login} />
+          <Route path="/register" Component={Register} />
+          <Route path="/activate/:otp" Component={EmailVerification} />
+          <Route path="/reset" Component={ForgetPassword} />
+        </Route>
 
         {/* Protected */}
         <Route Component={RequireAuth}>
           <Route path="/" Component={UserHomePage} />
           <Route path="/scan" Component={Scanner} />
-          <Route path="/course" Component={HomePage} />
-          <Route path="/course/:courseTitle" Component={CourseDetail} />
+          <Route path="/course">
+            <Route index Component={CoursePage} />
+            <Route path="/course/:courseTitle" Component={CourseDetail} />
+            <Route
+              path="/course/:courseTitle/:lessonTitle"
+              Component={LessonPage}
+            />
+          </Route>
         </Route>
 
         {/* Admin Only */}
-        {/* <Route Component={AdminOnly}> */}
-        <Route path="/admin" Component={AdminLayout}>
-          <Route index Component={Dashboard} />
-          <Route path="/admin/courses" Component={Course} />
-          <Route path="/admin/challenges" Component={Challenges} />
-          <Route path="/admin/users" Component={Course} />
-          {/* <Route path="/course" Component={} /> */}
+        <Route Component={AdminOnly}>
+          <Route path="/admin" Component={AdminLayout}>
+            <Route index Component={Dashboard} />
+            <Route path="/admin/courses" Component={Course} />
+            <Route path="/admin/challenges" Component={Challenges} />
+            <Route path="/admin/users" Component={Course} />
+            {/* <Route path="/course" Component={} /> */}
+          </Route>
         </Route>
-        {/* </Route> */}
 
         {/* Not Found */}
         <Route path="*" element={<ErrorPage />} />

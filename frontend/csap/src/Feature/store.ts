@@ -14,8 +14,8 @@ import storageSession from "redux-persist/lib/storage/session";
 import UserReducer from "./User/UserSlice";
 import CourseReducer from "./Course/CourseSlice";
 import AdminStatsReducer from "./Admin/AdminStatsSlice";
-// import thunk from "redux-thunk";
-
+import LessonReducer from "./Course/LessonSlice";
+import CurrentLesson from "./Course/CurrentLesson";
 const rootPersistConfig = {
   key: "root",
   storage,
@@ -29,6 +29,8 @@ const userPersistConfig = {
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, UserReducer),
   course: persistReducer(rootPersistConfig, CourseReducer),
+  lesson: persistReducer(userPersistConfig, LessonReducer),
+  currentLesson: persistReducer(userPersistConfig, CurrentLesson),
   admin: persistReducer(userPersistConfig, AdminStatsReducer),
 });
 

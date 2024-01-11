@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface CourseState {
-  value: { title: string; description: string }[];
+  value: { id: string; title: string; description: string }[];
 }
 
 const initialState: CourseState = {

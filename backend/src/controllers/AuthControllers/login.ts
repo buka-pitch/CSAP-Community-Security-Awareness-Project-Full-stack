@@ -12,7 +12,7 @@ export function LoginController(
     "local",
     (err: Error, user: any, info: Express.AuthInfo) => {
       if (err) return next(err);
-      if (!user) return res.send(info);
+      if (!user) return res.status(404).send(info);
       else {
         req.login(user, (err) => {
           if (err) throw err;

@@ -33,7 +33,7 @@ app.use(
     },
     name: "csapSid",
     secret: "a santa at nasa",
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 7 * 24 * 60, //ms
@@ -48,9 +48,9 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/auth", AuthRoute);
-// app.use(AccessChecker);
+app.use(AccessChecker);
 app.use("/course", CourseRoute);
-// app.use(AdminAcessChecker);
+app.use(AdminAcessChecker);
 app.use("/admin", AdminRoute);
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
