@@ -11,25 +11,14 @@ export async function AccessChecker(
   next: NextFunction
 ) {
   try {
-    console.log(req.user);
-    if (!req.isAuthenticated()) {
-      passport.authenticate(
-        "local",
-        (err: Error, user: Users, info: Express.AuthInfo, status: number) => {
-          if (err) {
-            console.log(err);
-            return next(err);
-          }
-          if (!user) {
-            return res.redirect(301, "/login");
-          }
-          if (user) {
-            return next();
-          }
-        }
-      )(req, res, next);
+    if (req.user) {
+      return next();
     } else {
-      next();
+      const response: ApiErrorResponse = {
+        message: "Unauthorized",
+        status: "Failed",
+      };
+      return res.status(403).json(response);
     }
   } catch (error) {
     console.log(error);

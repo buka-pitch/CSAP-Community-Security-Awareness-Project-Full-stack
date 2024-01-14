@@ -107,6 +107,7 @@ export async function CreateCourse(
           data: {
             title: req.body.title,
             description: req.body.description,
+            img: req.body.img,
           },
         })
         .then((course) => {
@@ -167,7 +168,11 @@ export async function UpdateCourse(
         return res.status(200).json(responseData);
       });
   } catch (err) {
-    return next(err);
+    const error: ApiErrorResponse = {
+      status: "Failed",
+      message: "Something went wrong",
+    };
+    return res.status(400).json(error);
   }
 }
 

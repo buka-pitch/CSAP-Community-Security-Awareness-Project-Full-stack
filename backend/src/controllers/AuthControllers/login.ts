@@ -1,7 +1,7 @@
 import { verify } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import passport from "../../utils/PassportConfig";
-import { ApiResponse } from "../../types/global";
+import { ApiErrorResponse, ApiResponse } from "../../types/global";
 
 export function LoginController(
   req: Request,

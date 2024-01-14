@@ -1,4 +1,10 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, {
+  Application,
+  NextFunction,
+  Request,
+  Response,
+  ErrorRequestHandler,
+} from "express";
 import { ApiResponse, ApiErrorResponse } from "./types/global";
 import AuthRoute from "./routes/Auth_Routes";
 import CourseRoute from "./routes/Course_Routes";
@@ -55,9 +61,10 @@ app.use("/admin", AdminRoute);
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (error) {
+    console.log(error);
     const errorData: ApiErrorResponse = {
       status: "Failed",
-      message: error.message,
+      message: error.message || "Something Went Wrong!",
     };
     return res.status(400).json(errorData);
   }

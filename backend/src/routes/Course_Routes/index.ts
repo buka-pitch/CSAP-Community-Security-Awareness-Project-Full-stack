@@ -8,7 +8,11 @@ import {
   UpdateCourse,
 } from "../../controllers/CourseControllers";
 import {
+  CheckQuestionAnswer,
+  GetFirstQuestion,
+  GetLesson,
   GetLessons,
+  GetQuestions,
   SaveCurrentLessonState,
 } from "../../controllers/CourseControllers/Lessons";
 
@@ -18,6 +22,10 @@ router.route("/").get(GetAllCourses).post(CreateCourse);
 router.route("/featured").get(GetFeaturedCourse);
 router.route("/:title").get(GetCourse).delete(DeleteCourse).patch(UpdateCourse);
 router.route("/lessons/:courseId").get(GetLessons);
+router.route("/lesson/:lessonId").get(GetLesson);
+router.route("/lesson/quiz/:lessonId/first").get(GetFirstQuestion);
+router.route("/lesson/quiz/:lessonId").get(GetQuestions);
+router.route("/lesson/quiz/:lessonId/answer").post(CheckQuestionAnswer);
 router.route("/save-user-lesson-data").post(SaveCurrentLessonState);
 
 // router.route('/:id/certificate').get();
