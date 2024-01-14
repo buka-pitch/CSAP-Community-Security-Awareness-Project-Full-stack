@@ -1,45 +1,37 @@
-import { Location, RouteProps, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Button,
   Card,
-  CardContent,
   CardHeader,
-  CircularProgress,
   Divider,
   Grid,
   Paper,
   Typography,
 } from "@mui/material";
+
 import useFetch, { ACTIONS } from "../../../Hooks/useFetch";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../Feature/store";
 import { setLessons } from "../../../Feature/Course/LessonSlice";
 
-import {
-  Approval,
-  ArrowDownward,
-  ArrowForward,
-  PausePresentation,
-  PlayLesson,
-  QuestionAnswer,
-  Quiz,
-  SpaceBar,
-} from "@mui/icons-material";
-import { Navlinks } from "../../HomePage/UserHomePage/Styles";
+import { Approval, ArrowForward, Quiz } from "@mui/icons-material";
 import axios from "../../../Utils/axiosInstance";
-import Course from "../../AdminPages/Course";
 import { useState } from "react";
-import { setCurrentLessons } from "../../../Feature/Course/CurrentLesson";
-import { ActionButton } from "../../../Components/HeaderBanner";
+import {
+  setCurrentLessons,
+  setNumberofLessons,
+} from "../../../Feature/Course/CurrentLesson";
+import Loading from "../../../Components/LoadingComponent/Loading";
 
 function CourseDetail() {
   const { courseTitle } = useParams();
   const dispatch = useDispatch();
   const Courses = useSelector((state: RootState) => state.course.value).find(
-    (course) => course.title == courseTitle
+    (course) => course.title === courseTitle?.toString()
   );
+
   const user = useSelector((state: RootState) => state.user.value.user);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -48,13 +40,14 @@ function CourseDetail() {
     method: ACTIONS.GET_REQUEST,
     data: [],
   });
+
   if (data.data.data.length > 0) {
+    dispatch(setNumberofLessons(data.data.data.length));
     dispatch(setLessons(data.data.data));
   }
 
   const handleEnroll = async () => {
     setIsLoading(true);
-    alert(data.data.data[0].id);
     dispatch(
       setCurrentLessons({
         courseId: Courses?.id,
@@ -70,7 +63,7 @@ function CourseDetail() {
       .then((res) => {
         setIsLoading(false);
         if (res.status == 200) {
-          navigate(`/course/${courseTitle}/${Courses?.title}`);
+          navigate(`/course/${courseTitle}/${data.data.data[0].id}`);
         }
       })
       .catch((err) => {
@@ -141,15 +134,15 @@ function CourseDetail() {
                 })
               ) : (
                 <GridWrap item xs={12} sm={12} md={12} lg={12}>
-                  <CircularProgress />
+                  <Loading />
                 </GridWrap>
               )}
             </LessonsView>
           </Grid>
 
           <Container>
-            {isLoading ? (
-              <CircularProgress />
+            {!data.loading && data.data.data.length === 0 ? (
+              <>Please check back letter Comming Soon</>
             ) : (
               <Button
                 onClick={handleEnroll}
@@ -211,6 +204,7 @@ const LessonsView = styled.div`
   justify-content: center;
   position: relative;
 `;
+
 const CourseHeader = styled.div`
   width: 100%;
   height: 100%;
@@ -221,10 +215,12 @@ const CourseHeader = styled.div`
   align-items: center;
   gap: 10px;
 `;
+
 const GridContent = styled.div`
   width: 100%;
   height: 100%;
 `;
+
 const Container = styled.div`
   width: 100%;
   height: 100%;
@@ -237,13 +233,14 @@ const Container = styled.div`
   padding-top: 20px;
   padding-bottom: 20px;
 `;
+
 const GridWrap = styled(Grid)`
   width: 100%;
   height: 100%;
   display: grid;
   justify-content: center;
   align-items: center;
-  /* background-color: whitesmoke; */
   padding: 10px;
 `;
+
 export default CourseDetail;

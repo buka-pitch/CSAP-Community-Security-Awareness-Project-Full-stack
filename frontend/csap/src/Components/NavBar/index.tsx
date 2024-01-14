@@ -1,21 +1,9 @@
-import {
-  NavLink,
-  useLocation,
-  useNavigate,
-  useNavigation,
-} from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Feature/store";
 import axios from "../../Utils/axiosInstance";
-import {
-  ArrowForward,
-  Logout,
-  Menu as Menui,
-  MenuOpen,
-  PersonAdd,
-  Settings,
-} from "@mui/icons-material";
+import { ArrowForward, Logout, Menu as Menui } from "@mui/icons-material";
 import React, { useState } from "react";
 import {
   Avatar,
@@ -28,7 +16,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { UserState, logoutUser, setUser } from "../../Feature/User/UserSlice";
+import { logoutUser } from "../../Feature/User/UserSlice";
 
 const PopupMenu = () => {
   const user = useSelector((state: RootState) => state.user.value);
@@ -43,7 +31,7 @@ const PopupMenu = () => {
   };
 
   const usernameFirstWord = () => {
-    let word = user.user.Name[0].toUpperCase();
+    const word = user.isAuthenticated && user.user.Name.toUpperCase();
     return word;
   };
 
@@ -53,12 +41,12 @@ const PopupMenu = () => {
       .then((res) => {
         if (res.status === 200) {
           console.log(res.data);
-          dispatch(logoutUser(""));
+          dispatch(logoutUser());
         } else {
-          dispatch(logoutUser(""));
+          dispatch(logoutUser());
         }
       })
-      .catch((err) => dispatch(logoutUser("")));
+      .catch((err) => dispatch(logoutUser()));
   };
 
   return (

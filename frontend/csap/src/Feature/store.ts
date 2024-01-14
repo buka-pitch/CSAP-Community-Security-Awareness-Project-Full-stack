@@ -16,6 +16,7 @@ import CourseReducer from "./Course/CourseSlice";
 import AdminStatsReducer from "./Admin/AdminStatsSlice";
 import LessonReducer from "./Course/LessonSlice";
 import CurrentLesson from "./Course/CurrentLesson";
+import { thunk } from "redux-thunk";
 const rootPersistConfig = {
   key: "root",
   storage,
@@ -27,22 +28,20 @@ const userPersistConfig = {
 };
 
 const rootReducer = combineReducers({
-  user: persistReducer(userPersistConfig, UserReducer),
-  course: persistReducer(rootPersistConfig, CourseReducer),
-  lesson: persistReducer(userPersistConfig, LessonReducer),
-  currentLesson: persistReducer(userPersistConfig, CurrentLesson),
-  admin: persistReducer(userPersistConfig, AdminStatsReducer),
+  user: UserReducer,
+  course: CourseReducer,
+  lesson: LessonReducer,
+  currentLesson: CurrentLesson,
+  admin: AdminStatsReducer,
 });
 
-export const persistedReducer = rootReducer;
+export const persistedReducer = persistReducer(userPersistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      serializableCheck: false,
     }),
 });
 

@@ -1,6 +1,9 @@
 import { useEffect, useReducer } from "react";
 import axios from "../Utils/axiosInstance";
-import { redirect } from "react-router-dom";
+import { redirect, useLocation } from "react-router-dom";
+import { logoutUser } from "../Feature/User/UserSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 type props = {
   url: string;
   method: ACTIONS;
@@ -63,7 +66,10 @@ function reducer(_state: FetchState, { type, payload }: FetchAction) {
 }
 
 function useFetch({ url, data, method }: props) {
+  const dispatchState = useDispatch();
+  const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
+
   useEffect(() => {
     dispatch({ type: ACTIONS.API_REQUEST, payload: initialState });
     switch (method) {
@@ -85,6 +91,7 @@ function useFetch({ url, data, method }: props) {
   }, [url]);
 
   async function get(url: string) {
+    console.log("get");
     await axios
       .get(url)
       .then((res) => {
@@ -94,6 +101,7 @@ function useFetch({ url, data, method }: props) {
         });
       })
       .catch((err: Error) => {
+        console.log(err);
         ResolveAuthError(err);
         dispatch({
           type: ACTIONS.ERROR,
@@ -173,9 +181,11 @@ function useFetch({ url, data, method }: props) {
       });
   }
 
+  // Handle Authentication Errors
   function ResolveAuthError(error: Error) {
     if (error.message.includes(KnownResponseErrors.NotAuthenticated)) {
-      return redirect("/login", { statusText: "Login To Continue" });
+      dispatchState(logoutUser(""));
+      return navigate("/login", { replace: true });
     } else if (error.message.includes(KnownResponseErrors.Unauthorized)) {
       return redirect("/unauthrozed", { statusText: "Unauthorized" });
     }

@@ -23,6 +23,8 @@ import CoursePage from "./Pages/CoursePage";
 import EmailVerification from "./Pages/AuthPages/RegistrationPage/Verification";
 import ForgetPassword from "./Pages/AuthPages/ForgetPasswordPage";
 import LessonPage from "./Pages/CoursePage/LessonLearning";
+import QuizPage from "./Pages/CoursePage/LessonLearning/QuizPage";
+import NotFound from "./Components/NotFound";
 
 function App() {
   const isAUthenticated = useAuth();
@@ -55,8 +57,12 @@ function App() {
             <Route index Component={CoursePage} />
             <Route path="/course/:courseTitle" Component={CourseDetail} />
             <Route
-              path="/course/:courseTitle/:lessonTitle"
+              path="/course/:courseTitle/:lessonId"
               Component={LessonPage}
+            />
+            <Route
+              path="/course/:courseTitle/:lessonId/Quiz/:id"
+              Component={QuizPage}
             />
           </Route>
         </Route>
@@ -73,6 +79,7 @@ function App() {
         </Route>
 
         {/* Not Found */}
+        <Route path="/notfound" Component={NotFound} />
         <Route path="*" element={<ErrorPage />} />
       </Route>
     </Routes>

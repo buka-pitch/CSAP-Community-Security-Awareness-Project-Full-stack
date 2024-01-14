@@ -32,7 +32,7 @@ function CourseHeader({ courses, courseData }: props) {
         >
           Featured Courses
         </Typography>
-        {courses &&
+        {courses.value.length > 0 &&
           courses.value.map((item) => (
             <Navlinks to={"/course/" + item.title} key={item.title}>
               <HCard>

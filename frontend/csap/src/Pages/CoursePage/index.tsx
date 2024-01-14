@@ -17,11 +17,6 @@ import { PieChart } from "@mui/x-charts";
 import { useState } from "react";
 
 function CoursePage() {
-  // const courseUpdate = useFetch({
-  //   url: "/course",
-  //   data: [],
-  //   method: ACTIONS.GET_REQUEST,
-  // });
   const courses = useSelector((state: RootState) => state.course.value);
   const [lessons, setLessons] = useState([{}]);
 
@@ -79,7 +74,7 @@ function CoursePage() {
                       </Card>
                     </Navlinks>
                   );
-                })}{" "}
+                })}
               {courses &&
                 courses.map((item) => {
                   return (

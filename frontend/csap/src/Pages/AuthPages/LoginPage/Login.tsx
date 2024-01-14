@@ -61,6 +61,8 @@ export const Login = () => {
       )
       .then((res) => {
         if (res.data?.id) {
+          console.log(res.data.data);
+          console.log(res);
           dispatcher(setUser(res.data));
           dispatcher(setIsAuthenticated(true));
           setIsLoading(false);
@@ -74,7 +76,7 @@ export const Login = () => {
         // err.response.message && setError(err.response.message);
         // setError(err.response.data.message);
         // setIsLoading(false);
-        setError(err.response.data.message);
+        setError(err.message);
         return err;
       });
     setIsLoading(false);

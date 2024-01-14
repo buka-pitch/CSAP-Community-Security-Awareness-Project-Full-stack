@@ -2,13 +2,16 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface currentLessonState {
   value: {
-    currentLesson: string;
-    courseId: string;
+    lessonState: { currentLesson: string; courseId: string };
+    numberOfLessons: number;
   };
 }
 
 const initialState: currentLessonState = {
-  value: { currentLesson: "", courseId: "" },
+  value: {
+    lessonState: { currentLesson: "", courseId: "" },
+    numberOfLessons: 0,
+  },
 };
 
 export const CurrentLessonSlice = createSlice({
@@ -16,12 +19,17 @@ export const CurrentLessonSlice = createSlice({
   initialState,
   reducers: {
     setCurrentLessons: (state, action) => {
-      state.value = action.payload;
+      state.value.lessonState = action.payload;
+    },
+
+    setNumberofLessons: (state, action) => {
+      state.value.numberOfLessons = action.payload;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setCurrentLessons } = CurrentLessonSlice.actions;
+export const { setCurrentLessons, setNumberofLessons } =
+  CurrentLessonSlice.actions;
 
 export default CurrentLessonSlice.reducer;

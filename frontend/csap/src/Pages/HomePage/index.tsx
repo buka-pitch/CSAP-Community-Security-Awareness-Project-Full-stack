@@ -15,10 +15,11 @@ import socialIcons from "../../assets/avater.png";
 import bgimg from "../../assets/bg.jpg";
 import Typewriter from "typewriter-effect";
 import { Typography } from "@mui/material";
+import { Navlinks } from "./UserHomePage/Styles";
 //...
 
 function HomePage() {
-  const [data, setData] = useState([]);
+  document.title = "CSAP - Security Awareness - Homepage";
   const user = useSelector((state: RootState) => state.user.value);
 
   return (
@@ -54,7 +55,9 @@ function HomePage() {
               }}
             />
           </Typography>
-          <ActionButton>Get Started</ActionButton>
+          <Navlinks to="/course">
+            <ActionButton>Get Started</ActionButton>
+          </Navlinks>
         </HeaderContent>
         {/* <HeaderImg itemProp={socialIcons}></HeaderImg> */}
       </HeaderContainer>
@@ -79,12 +82,6 @@ function HomePage() {
         ]}
       />
       <CustomBanner data={[]} />
-      <Link to="/login">Login</Link>
-      HomePage
-      <p>{user.user?.Email}</p>
-      {/* {data.map((item) => { */}
-      {/* return <p>{item.title}</p>; */}
-      {/* })} */}
     </>
   );
 }

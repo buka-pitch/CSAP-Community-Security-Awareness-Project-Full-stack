@@ -13,7 +13,7 @@ export interface UserState {
       chatId: number | undefined;
       createdAt: Date | undefined;
       updatedAt: Date | undefined;
-      data: object | undefined | null;
+      data: object | null;
     };
   };
 }

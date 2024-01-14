@@ -1,6 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface LessonState {
+export type LessonState = {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string;
+  img: string;
+  createdAt: Date;
+  lastSeen: Date;
+};
+export interface LessonsState {
   value: {
     id: string;
     courseId: string;
@@ -12,7 +21,7 @@ export interface LessonState {
   }[];
 }
 
-const initialState: LessonState = {
+const initialState: LessonsState = {
   value: [],
 };
 
