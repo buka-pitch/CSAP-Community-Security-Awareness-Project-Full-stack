@@ -67,25 +67,24 @@ function QuizPage() {
       .then((res) => {
         if (res.status === 200) {
           if (res.data.data.correct === true) {
-            alert(res.data.data.correct);
-            setCorrectAnswers((prev) => prev++);
-            alert("correct");
+            setCorrectAnswers((prev) => prev + 1);
 
             const currentIndex = question.indexOf(
               question.find((item) => item.id === question[current].id)!
             );
-            alert(`${current} ${currentIndex} ${question.length}`);
             if (question.length - 1 !== currentIndex) {
-              setCurrent((prev) => prev++);
+              setCurrent((prev) => prev + 1);
               navigation(
-                `/course/${courseTitle}/${lessonId}/quiz/${question[current]}`
+                `/course/${courseTitle}/${lessonId}/quiz/${
+                  question[current + 1]
+                }`
               );
               setIsLoading(false);
             } else {
-              alert("done");
+              navigation(`/course/${courseTitle}/${lessonId}/cert`, {
+                replace: true,
+              });
             }
-          } else {
-            alert("Not correct");
           }
           setIsLoading(false);
         }

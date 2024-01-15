@@ -25,6 +25,7 @@ import ForgetPassword from "./Pages/AuthPages/ForgetPasswordPage";
 import LessonPage from "./Pages/CoursePage/LessonLearning";
 import QuizPage from "./Pages/CoursePage/LessonLearning/QuizPage";
 import NotFound from "./Components/NotFound";
+import Certificate from "./Pages/CoursePage/Certificate";
 
 function App() {
   const isAUthenticated = useAuth();
@@ -63,6 +64,10 @@ function App() {
             <Route
               path="/course/:courseTitle/:lessonId/Quiz/:id"
               Component={QuizPage}
+            />
+            <Route
+              path="/course/:courseTitle/:lessonId/cert"
+              Component={Certificate}
             />
           </Route>
         </Route>

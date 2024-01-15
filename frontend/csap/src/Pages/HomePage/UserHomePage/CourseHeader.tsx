@@ -37,8 +37,7 @@ function CourseHeader({ courses, courseData }: props) {
             <Navlinks to={"/course/" + item.title} key={item.title}>
               <HCard>
                 <CardMedia
-                  sx={{ height: "100%", width: "100%" }}
-                  image={img}
+                  sx={{ height: "100%", width: "100%", bgcolor: "black" }}
                   children={
                     <HCardHeader
                       sx={{ color: "blueviolet" }}

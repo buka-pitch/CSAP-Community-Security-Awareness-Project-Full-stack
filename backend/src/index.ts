@@ -9,6 +9,7 @@ import { ApiResponse, ApiErrorResponse } from "./types/global";
 import AuthRoute from "./routes/Auth_Routes";
 import CourseRoute from "./routes/Course_Routes";
 import AdminRoute from "./routes/Admin_Routes";
+import ScanRoute from "./routes/Scanner_Routes";
 import passport from "./utils/PassportConfig";
 import expressSession, { Cookie } from "express-session";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
@@ -54,8 +55,9 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/auth", AuthRoute);
-app.use(AccessChecker);
+app.use("/scan", ScanRoute);
 app.use("/course", CourseRoute);
+app.use(AccessChecker);
 app.use(AdminAcessChecker);
 app.use("/admin", AdminRoute);
 
@@ -70,6 +72,10 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+process.on("uncaughtException", function (err) {
+  // Handle the error safely
+  console.log(err);
+});
 app.listen(PORT, () => {
   console.log("server running on http://localhost:" + PORT);
 });

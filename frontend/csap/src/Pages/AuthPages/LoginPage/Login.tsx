@@ -18,13 +18,12 @@ const schema = yup.object({
       /^(?=.{1,256})(?=.{1,64}@.{1,255}$)[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/,
       "Please use a valid Email!"
     ),
-  password: yup
-    .string()
-    .required("Password Required !")
-    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
-      message:
-        "Password must be at least one letter one number and one Charachter, No Space",
-    }),
+  password: yup.string(),
+  // .required("Password Required !")
+  // .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+  //   message:
+  //     "Password must be at least one letter one number and one Charachter, No Space",
+  // }),
 });
 
 type FormInputs = {
@@ -76,7 +75,7 @@ export const Login = () => {
         // err.response.message && setError(err.response.message);
         // setError(err.response.data.message);
         // setIsLoading(false);
-        setError(err.message);
+        setError(err.response.data.message);
         return err;
       });
     setIsLoading(false);

@@ -163,17 +163,21 @@ const Container = styled.div`
 
 const Modal = styled.div`
   width: 90%;
+  /* max-width: 70vw; */
   height: 100%;
   background-color: #fff;
   position: relative;
 `;
 const ArticleWrapper = styled.article`
-  width: 80%;
+  width: 100%;
+  max-width: 80vw;
   height: 100%;
-  padding: 40px;
+  padding: 20px;
   display: flex;
   align-items: start;
-  justify-content: start;
+  justify-content: center;
+  font-size: large;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 `;
 const Header = styled.div`
   top: 0px;

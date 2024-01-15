@@ -16,7 +16,6 @@ function UserHomePage() {
     method: ACTIONS.GET_REQUEST,
   });
 
-  if (courseData.error) alert(courseData.error);
   if (!courseData.error && !courseData.loading) {
     dispatch(setCourses(courseData.data?.data));
   }

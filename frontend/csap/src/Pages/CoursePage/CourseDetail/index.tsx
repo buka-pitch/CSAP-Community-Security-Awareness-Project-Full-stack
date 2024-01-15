@@ -28,8 +28,9 @@ import Loading from "../../../Components/LoadingComponent/Loading";
 function CourseDetail() {
   const { courseTitle } = useParams();
   const dispatch = useDispatch();
+
   const Courses = useSelector((state: RootState) => state.course.value).find(
-    (course) => course.title === courseTitle?.toString()
+    (course) => course.title === courseTitle
   );
 
   const user = useSelector((state: RootState) => state.user.value.user);
@@ -106,7 +107,7 @@ function CourseDetail() {
               {!data.loading && !data.error ? (
                 data.data.data.map((item) => {
                   return (
-                    <>
+                    <ScrollContainer>
                       <GridWrap item xs={12} sm={12} md={8} lg={8}>
                         <ArrowForward />
                       </GridWrap>
@@ -129,7 +130,7 @@ function CourseDetail() {
                           />
                         </Card>
                       </GridWrap>
-                    </>
+                    </ScrollContainer>
                   );
                 })
               ) : (
@@ -192,12 +193,18 @@ function CourseDetail() {
     </Container>
   );
 }
-
+const ScrollContainer = styled.div`
+  width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 const LessonsView = styled.div`
   padding-top: 50px;
   margin-bottom: 70px;
   margin-top: 50px;
   width: 100%;
+  max-width: 90vw;
   height: 100%;
   display: flex;
   align-items: center;

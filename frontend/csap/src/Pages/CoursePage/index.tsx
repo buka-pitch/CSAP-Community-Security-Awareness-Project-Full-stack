@@ -85,7 +85,7 @@ function CoursePage() {
                           title={item?.title}
                           sx={{ bgcolor: "blueviolet", color: "white" }}
                         />
-                        <CardContent>{item.description}</CardContent>
+                        <Article>{item.description}</Article>
                       </Card>
                     </Navlinks>
                   );
@@ -116,6 +116,13 @@ const Navlinks = styled(NavLink)`
   &:hover {
     translate: 10px -10px;
   }
+`;
+const Article = styled(CardContent)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 const LessonHeader = styled.div`
   width: 100%;
